@@ -1,0 +1,25 @@
+{
+  "name": "purescript-bonsai-jsdom",
+  "homepage": "https://grmble.github.io/purescript-bonsai/",
+  "description": "Bonsai JSDOM",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/grmble/purescript-bonsai-jsdom.git"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-prelude": "^3.1.1",
+    "purescript-console": "^3.0.0",
+    "purescript-bonsai-dom": "grmble/purescript-bonsai-dom#master"
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^3.0.0",
+    "purescript-test-unit": "^13.0.0"
+  }
+}

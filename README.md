@@ -1,5 +1,8 @@
 # Purescript Bonsai JSDOM
 
+[![Build Status](https://travis-ci.org/grmble/purescript-bonsai-jsdom.svg?branch=master)](https://travis-ci.org/grmble/purescript-bonsai-jsdom)
+
+
 JSDOM for Bonsai, for testing and/or server side rendering.
 
 This also contains the test suite for `purescript-bonsai-dom`.

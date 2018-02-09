@@ -5,6 +5,16 @@
 
 JSDOM for Bonsai, for testing and/or server side rendering.
 
+
+Note that if you use this in your package, you will need
+additional npm (dev) dependencies:
+
+```sh
+npm install --save-dev jsdom
+npm install --save-dev jsdom-simulant
+```
+
+
 This also contains the test suite for `purescript-bonsai-dom`.
 
 `purescript-bonsai` is getting ready for 1.0.

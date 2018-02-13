@@ -3,16 +3,18 @@ where
 
 import Prelude
 
-import Bonsai.DOM (DOM, Document(..), ElementId(..), affF, elementById, innerHTML, locationHash, ownerDocument, querySelector, querySelectorAll, textContent)
-import Bonsai.JSDOM (jsdomDocument)
-import Control.Monad.Aff (try)
+import Bonsai.DOM (DOM, Document(Document), ElementId(ElementId), addEventListener, affF, elementById, innerHTML, locationHash, ownerDocument, querySelector, querySelectorAll, textContent)
+import Bonsai.JSDOM (fireClick, jsdomDocument, setValue)
+import Control.Monad.Aff (liftEff', try)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.AVar (AVAR)
 import Control.Monad.Eff.Console (CONSOLE)
+import Control.Monad.Eff.Ref (REF, newRef, readRef, writeRef)
 import Control.Monad.Free (Free)
 import Data.Array as Array
 import Data.Either (isLeft)
-import Data.Foreign (isNull, isUndefined)
+import Data.Foreign (isNull, isUndefined, readString)
+import Data.Foreign.Index ((!))
 import Data.Newtype (unwrap)
 import Test.Unit (TestF, suite, test)
 import Test.Unit.Assert as Assert
@@ -25,6 +27,7 @@ main :: forall eff.
     , testOutput :: TESTOUTPUT
     , avar :: AVAR
     , dom :: DOM
+    , ref :: REF
     | eff
     )
     Unit
@@ -35,7 +38,7 @@ main = runTest $
 mainHtml :: String
 mainHtml = """<html><body id="main">Hello, world!</body></html>"""
 
-tests :: forall eff. Free (TestF (dom::DOM|eff)) Unit
+tests :: forall eff. Free (TestF (console::CONSOLE,dom::DOM,ref::REF|eff)) Unit
 tests =
 
   suite "Bonsai.DOM" do
@@ -74,6 +77,35 @@ tests =
     test "locationHash" do
       hash <- affF $ jsdomDocument mainHtml >>= locationHash
       Assert.equal "" hash
+
+    test "addEventListener" do
+      doc <- affF $ jsdomDocument """<html>
+<head><title>Test</title></head>
+<body>
+  <input id="I1" type="text"/>
+  <button id="B1" type="button">CLICK ME</button>
+</body>
+</html>
+"""
+      i1 <- affF $ elementById (ElementId "I1") doc
+      b1 <- affF $ elementById (ElementId "B1") doc
+
+      fired <- liftEff' $ newRef false
+      affF $
+        addEventListener
+          { capture: false, once:false, passive: false }
+          "click"
+          (\_ -> writeRef fired true)
+          b1
+
+      affF $ setValue "Hello, world!" i1
+      v <- affF $ (unwrap i1) ! "value" >>= readString
+      Assert.equal v "Hello, world!"
+
+
+      affF $ fireClick b1
+      isFired <- liftEff' $ readRef fired
+      Assert.assert "isFired" isFired
 
 
     -- the other DOM helpers can't really be tested with our limited

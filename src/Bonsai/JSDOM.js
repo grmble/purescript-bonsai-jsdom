@@ -14,6 +14,11 @@ exports.primitives =
       const dom = new jsdom.JSDOM(str, jsdomOpts);
       return dom.window;
     }
+
+  , setProperty: function (name, value, elem) {
+      elem[name] = value;
+    }
+
   , simulantFire: function (ev, elem) {
       simulant.fire(elem, ev);
     }

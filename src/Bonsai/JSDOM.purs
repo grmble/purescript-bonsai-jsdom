@@ -4,6 +4,7 @@
 -- | with JSDOM for testing or server side rendering.
 module Bonsai.JSDOM
   ( fireClick
+  , fireInput
   , jsdomDocument
   , jsdomWindow
   , setProperty
@@ -21,6 +22,7 @@ import Foreign (F, Foreign, unsafeToForeign)
 foreign import primitives ::
   { jsdomWindow :: Fn1 String Foreign
   , fireClick :: Fn1 Element Unit
+  , fireInput :: Fn1 Element Unit
   , setProperty :: Fn3 String Foreign Element Unit
   }
 
@@ -53,3 +55,8 @@ setValue =
 fireClick :: Element -> F Unit
 fireClick =
   pure <<< primitives.fireClick
+
+-- | Fire a input event
+fireInput :: Element -> F Unit
+fireInput =
+  pure <<< primitives.fireInput

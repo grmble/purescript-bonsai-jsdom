@@ -4,7 +4,7 @@ where
 import Prelude
 
 import Bonsai.DOM (Document(Document), ElementId(ElementId), addEventListener, affF, elementById, innerHTML, locationHash, ownerDocument, querySelector, querySelectorAll, textContent)
-import Bonsai.JSDOM (fireClick, jsdomDocument, setValue)
+import Bonsai.JSDOM (fireClick, fireInput, jsdomDocument, setValue)
 import Effect.Aff (try)
 import Effect (Effect)
 import Effect.Class (liftEffect)
@@ -96,6 +96,9 @@ tests =
       isFired <- liftEffect $ Ref.read fired
       Assert.assert "isFired" isFired
 
+      affF $ fireInput i1
+      isInputFired <- liftEffect $ Ref.read fired
+      Assert.assert "isFired" isInputFired
 
     -- the other DOM helpers can't really be tested with our limited
     -- dom vocabulary.  they will be exercised by the full virtualdom/bonsai tests

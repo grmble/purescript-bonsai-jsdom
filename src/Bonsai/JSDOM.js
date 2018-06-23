@@ -28,4 +28,13 @@ exports.primitives =
       elem.dispatchEvent(ev);
     }
 
+  , fireInput: function (elem) {
+      const win = elem.ownerDocument.defaultView;
+      const ev = new win.MouseEvent('input', {
+          view: elem.ownerDocument.defaultView,
+          bubbles: true,
+          cancelable: true
+      });
+      elem.dispatchEvent(ev);
+    }
   };

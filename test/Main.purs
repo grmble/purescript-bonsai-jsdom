@@ -3,34 +3,23 @@ where
 
 import Prelude
 
-import Bonsai.DOM (DOM, Document(Document), ElementId(ElementId), addEventListener, affF, elementById, innerHTML, locationHash, ownerDocument, querySelector, querySelectorAll, textContent)
+import Bonsai.DOM (Document(Document), ElementId(ElementId), addEventListener, affF, elementById, innerHTML, locationHash, ownerDocument, querySelector, querySelectorAll, textContent)
 import Bonsai.JSDOM (fireClick, jsdomDocument, setValue)
-import Control.Monad.Aff (liftEff', try)
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.AVar (AVAR)
-import Control.Monad.Eff.Console (CONSOLE)
-import Control.Monad.Eff.Ref (REF, newRef, readRef, writeRef)
+import Effect.Aff (try)
+import Effect (Effect)
+import Effect.Class (liftEffect)
+import Effect.Ref as Ref
 import Control.Monad.Free (Free)
 import Data.Array as Array
 import Data.Either (isLeft)
-import Data.Foreign (isNull, isUndefined, readString)
-import Data.Foreign.Index ((!))
+import Foreign (isNull, isUndefined, readString)
+import Foreign.Index ((!))
 import Data.Newtype (unwrap)
 import Test.Unit (TestF, suite, test)
 import Test.Unit.Assert as Assert
-import Test.Unit.Console (TESTOUTPUT)
 import Test.Unit.Main (runTest)
 
-main :: forall eff.
-  Eff
-    ( console :: CONSOLE
-    , testOutput :: TESTOUTPUT
-    , avar :: AVAR
-    , dom :: DOM
-    , ref :: REF
-    | eff
-    )
-    Unit
+main :: Effect Unit
 main = runTest $
   tests
 
@@ -38,7 +27,7 @@ main = runTest $
 mainHtml :: String
 mainHtml = """<html><body id="main">Hello, world!</body></html>"""
 
-tests :: forall eff. Free (TestF (console::CONSOLE,dom::DOM,ref::REF|eff)) Unit
+tests :: Free TestF Unit
 tests =
 
   suite "Bonsai.DOM" do
@@ -90,12 +79,12 @@ tests =
       i1 <- affF $ elementById (ElementId "I1") doc
       b1 <- affF $ elementById (ElementId "B1") doc
 
-      fired <- liftEff' $ newRef false
+      fired <- liftEffect $ Ref.new false
       affF $
         addEventListener
           { capture: false, once:false, passive: false }
           "click"
-          (\_ -> writeRef fired true)
+          (\_ -> Ref.write true fired)
           b1
 
       affF $ setValue "Hello, world!" i1
@@ -104,7 +93,7 @@ tests =
 
 
       affF $ fireClick b1
-      isFired <- liftEff' $ readRef fired
+      isFired <- liftEffect $ Ref.read fired
       Assert.assert "isFired" isFired
 
 

@@ -15,12 +15,13 @@ where
 import Prelude
 
 import Bonsai.DOM (Document, Element, Window(..), document, failNullOrUndefined)
-import Data.Foreign (F, Foreign, toForeign)
 import Data.Function.Uncurried (Fn1, Fn2, Fn3, runFn2, runFn3)
+import Foreign (F, Foreign, unsafeToForeign)
 
 
 foreign import primitives ::
   { jsdomWindow :: Fn1 String Foreign
+  , fireClick :: Fn1 Element Unit
   , simulantFire :: Fn2 String Element Unit
   , setProperty :: Fn3 String Foreign Element Unit
   }
@@ -42,7 +43,7 @@ jsdomDocument html =
 -- | Set a named property on the element.
 setProperty :: forall a. String -> a -> Element -> F Unit
 setProperty name value elem =
-  pure $ runFn3 primitives.setProperty name (toForeign value) elem
+  pure $ runFn3 primitives.setProperty name (unsafeToForeign value) elem
 
 
 -- | Set the value property on the element.
@@ -59,4 +60,4 @@ simulantFire ev elem =
 
 fireClick :: Element -> F Unit
 fireClick =
-  simulantFire "click"
+  pure <<< primitives.fireClick

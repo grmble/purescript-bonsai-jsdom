@@ -1,7 +1,6 @@
 "use strict";
 
 const jsdom = require('jsdom');
-const simulant = require('jsdom-simulant');
 
 const jsdomOpts = {
   runScripts: 'dangerously',
@@ -19,8 +18,14 @@ exports.primitives =
       elem[name] = value;
     }
 
-  , simulantFire: function (ev, elem) {
-      simulant.fire(elem, ev);
+  , fireClick: function (elem) {
+      const win = elem.ownerDocument.defaultView;
+      const ev = new win.MouseEvent('click', {
+          view: elem.ownerDocument.defaultView,
+          bubbles: true,
+          cancelable: true
+      });
+      elem.dispatchEvent(ev);
     }
 
   };

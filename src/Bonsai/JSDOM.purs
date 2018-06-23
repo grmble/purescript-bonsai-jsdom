@@ -8,21 +8,19 @@ module Bonsai.JSDOM
   , jsdomWindow
   , setProperty
   , setValue
-  , simulantFire
   )
 where
 
 import Prelude
 
 import Bonsai.DOM (Document, Element, Window(..), document, failNullOrUndefined)
-import Data.Function.Uncurried (Fn1, Fn2, Fn3, runFn2, runFn3)
+import Data.Function.Uncurried (Fn1, Fn3, runFn3)
 import Foreign (F, Foreign, unsafeToForeign)
 
 
 foreign import primitives ::
   { jsdomWindow :: Fn1 String Foreign
   , fireClick :: Fn1 Element Unit
-  , simulantFire :: Fn2 String Element Unit
   , setProperty :: Fn3 String Foreign Element Unit
   }
 
@@ -51,13 +49,7 @@ setValue :: String -> Element -> F Unit
 setValue =
   setProperty "value"
 
-
--- | Fire an event using simulant.
-simulantFire :: String -> Element -> F Unit
-simulantFire ev elem =
-  pure $ runFn2 primitives.simulantFire ev elem
-
-
+-- | Fire a click event
 fireClick :: Element -> F Unit
 fireClick =
   pure <<< primitives.fireClick

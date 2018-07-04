@@ -14,7 +14,7 @@
     "output"
   ],
   "dependencies": {
-    "purescript-bonsai-dom": "grmble/purescript-bonsai-dom#purs_0_12"
+    "purescript-bonsai-dom": "grmble/purescript-bonsai-dom#master"
   },
   "devDependencies": {
     "purescript-console": "^4.1.0",
